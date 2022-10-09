@@ -9,6 +9,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.codepath.apps.restclienttemplate.Helper.TimeFormatter
 
 import com.codepath.apps.restclienttemplate.models.Tweet
 
@@ -26,10 +27,10 @@ class TweetsAdapter(val tweets: ArrayList<Tweet>):RecyclerView.Adapter<TweetsAda
         val tweet: Tweet = tweets.get(position)
         holder.tvUser.text = tweet.user?.name
         holder.tvTweetBOdy.text = tweet.body
-
+        holder.tvTimeStamp.text = tweet.createdAt
         Glide.with(holder.itemView.context).load(tweet.user?.publicImageUrl)
             .into(holder.ivProfileImage)
-        
+
     }
 
     override fun getItemCount(): Int {
@@ -47,5 +48,6 @@ class TweetsAdapter(val tweets: ArrayList<Tweet>):RecyclerView.Adapter<TweetsAda
         val ivProfileImage = itemView.findViewById<ImageView>(R.id.ivProfileImage)
         val tvTweetBOdy = itemView.findViewById<TextView>(R.id.tvTweetBody)
         val tvUser = itemView.findViewById<TextView>(R.id.tvUsername)
+        val tvTimeStamp = itemView.findViewById<TextView>(R.id.tvTimeStamp)
     }
 }
