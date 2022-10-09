@@ -19,6 +19,7 @@ import com.github.scribejava.apis.TwitterApi
  * NOTE: You may want to rename this object based on the service i.e TwitterClient or FlickrClient
  *
  */
+
 class TwitterClient(context: Context) : OAuthBaseClient(
     context, REST_API_INSTANCE, REST_URL, REST_CONSUMER_KEY, REST_CONSUMER_SECRET,
     null, String.format(
@@ -31,7 +32,7 @@ class TwitterClient(context: Context) : OAuthBaseClient(
 ) {
 
     companion object {
-
+        var since_id:String ="1"
         val REST_API_INSTANCE = TwitterApi.instance()
 
         const val REST_URL = "https://api.twitter.com/1.1" // base API URL
@@ -53,24 +54,15 @@ class TwitterClient(context: Context) : OAuthBaseClient(
 
 
     fun getHomeTimeline(handler: JsonHttpResponseHandler) {
-        Log.i("TwitterClient","1")
+
         val apiUrl =
             getApiUrl("statuses/home_timeline.json")
-        Log.i("TwitterClient","2")
+
         // Can specify query string params directly or through RequestParams.
         val params = RequestParams()
-        params["count"] = "25"
-        params["since_id"] = "1"
+        params["count"] = (since_id.toInt()*25).toString()
+        params["since_id"] = since_id
         client.get(apiUrl, params, handler)
-        Log.i("TwitterClient","3")
-    }
 
-    /* 1. Define the endpoint URL with getApiUrl and pass a relative path to the endpoint
-	 * 	  i.e getApiUrl("statuses/home_timeline.json")
-	 * 2. Define the parameters to pass to the request (query or body)
-	 *    i.e val params = RequestParams("foo", "bar")
-	 * 3. Define the request method and make a call to the client
-	 *    i.e client.get(apiUrl, params, handler)
-	 *    i.e client.post(apiUrl, params, handler)
-	 */
+    }
 }

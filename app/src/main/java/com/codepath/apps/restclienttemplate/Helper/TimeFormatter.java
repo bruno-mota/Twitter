@@ -26,9 +26,7 @@ public class TimeFormatter {
 
             long diff = ((System.currentTimeMillis()) - (format.parse(rawJsonDate).getTime()));
             diff =diff/1000;
-            Log.i("Time",rawJsonDate);
 
-            Log.i("Time",System.currentTimeMillis()+"      "  + format.parse(rawJsonDate).getTime() + "    "+diff);
 
             if (diff < 5)
                 time = "Just now";

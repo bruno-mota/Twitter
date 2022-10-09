@@ -1,15 +1,17 @@
 package com.codepath.apps.restclienttemplate
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+import com.codepath.apps.restclienttemplate.Helper.EndlessRecyclerViewScrollListener
 import com.codepath.apps.restclienttemplate.models.Tweet
 import com.codepath.asynchttpclient.callback.JsonHttpResponseHandler
 import okhttp3.Headers
 import org.json.JSONException
+
 
 class TimelineActivity : AppCompatActivity() {
 
@@ -19,6 +21,7 @@ class TimelineActivity : AppCompatActivity() {
     lateinit var adapter: TweetsAdapter
     val tweets = ArrayList<Tweet>()
     lateinit var swipeContainer: SwipeRefreshLayout
+    lateinit var scrollListener: EndlessRecyclerViewScrollListener
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_timeline)
@@ -27,6 +30,8 @@ class TimelineActivity : AppCompatActivity() {
         swipeContainer = findViewById(R.id.swipeContainer)
 
         swipeContainer.setOnRefreshListener {
+            scrollListener.resetState()
+            TwitterClient.since_id = (1).toString()
             Log.i(TAG,"Refreshing Timeline")
             populateHomeTimeline()
         }
@@ -38,8 +43,23 @@ class TimelineActivity : AppCompatActivity() {
 
         rvTweets=findViewById(R.id.rvTweets)
         adapter= TweetsAdapter(tweets)
-        rvTweets.layoutManager=LinearLayoutManager(this)
+        val linearLayoutManager = LinearLayoutManager(this)
+        rvTweets.layoutManager=linearLayoutManager
         rvTweets.adapter = adapter
+        scrollListener = object : EndlessRecyclerViewScrollListener(linearLayoutManager) {
+            override fun onLoadMore(page: Int, totalItemsCount: Int, view: RecyclerView?) {
+                Log.i("TimeLine","onLoadMore")
+                // Triggered only when new data needs to be appended to the list
+                // Add whatever code is needed to append new items to the bottom of the list
+                Log.i("TimeLine",page.toString())
+                TwitterClient.since_id = (page+1).toString()
+                populateHomeTimeline()
+                //loadNextDataFromApi(page)
+            }
+        }
+        rvTweets.addOnScrollListener(scrollListener)
+
+
 
         populateHomeTimeline()
     }
