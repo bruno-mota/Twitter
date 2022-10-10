@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -12,6 +13,7 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.codepath.apps.restclienttemplate.Helper.EndlessRecyclerViewScrollListener
 import com.codepath.apps.restclienttemplate.models.Tweet
 import com.codepath.asynchttpclient.callback.JsonHttpResponseHandler
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import okhttp3.Headers
 import org.json.JSONException
 
@@ -19,7 +21,7 @@ import org.json.JSONException
 class TimelineActivity : AppCompatActivity() {
 
     lateinit var client: TwitterClient
-
+    lateinit var floatBtn: FloatingActionButton
     lateinit var rvTweets:RecyclerView
     lateinit var adapter: TweetsAdapter
     val tweets = ArrayList<Tweet>()
@@ -31,6 +33,14 @@ class TimelineActivity : AppCompatActivity() {
 
         client = TwitterApplication.getRestClient(this)
         swipeContainer = findViewById(R.id.swipeContainer)
+        floatBtn = findViewById(R.id.floatBtnCompose)
+        floatBtn.setOnClickListener{
+            val composeIntent = Intent(this,ComposeActivity::class.java)
+            startActivityForResult(composeIntent,REQUEST_CODE)
+        }
+
+
+
 
         swipeContainer.setOnRefreshListener {
             scrollListener.resetState()
@@ -67,7 +77,7 @@ class TimelineActivity : AppCompatActivity() {
         populateHomeTimeline()
     }
 
-    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+    /*override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.menu_main,menu)
         return true
     }
@@ -78,7 +88,7 @@ class TimelineActivity : AppCompatActivity() {
             startActivityForResult(composeIntent,REQUEST_CODE)
         }
         return super.onOptionsItemSelected(item)
-    }
+    }*/
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
 
