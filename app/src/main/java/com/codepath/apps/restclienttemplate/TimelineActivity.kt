@@ -10,6 +10,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+import com.codepath.apps.restclienttemplate.Fragments.ComposeFragment
 import com.codepath.apps.restclienttemplate.Helper.EndlessRecyclerViewScrollListener
 import com.codepath.apps.restclienttemplate.models.Tweet
 import com.codepath.asynchttpclient.callback.JsonHttpResponseHandler
@@ -18,7 +19,9 @@ import okhttp3.Headers
 import org.json.JSONException
 
 
-class TimelineActivity : AppCompatActivity() {
+class TimelineActivity : AppCompatActivity(), ComposeFragment.OnBackListener
+
+{
 
     lateinit var client: TwitterClient
     lateinit var floatBtn: FloatingActionButton
@@ -27,6 +30,14 @@ class TimelineActivity : AppCompatActivity() {
     val tweets = ArrayList<Tweet>()
     lateinit var swipeContainer: SwipeRefreshLayout
     lateinit var scrollListener: EndlessRecyclerViewScrollListener
+    override fun sendInput(tweet: Tweet) {
+        tweets.add(0,tweet)
+
+        adapter.notifyItemInserted(0)
+
+        rvTweets.smoothScrollToPosition(0)
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_timeline)
@@ -35,13 +46,12 @@ class TimelineActivity : AppCompatActivity() {
         swipeContainer = findViewById(R.id.swipeContainer)
         floatBtn = findViewById(R.id.floatBtnCompose)
         floatBtn.setOnClickListener{
-            val composeIntent = Intent(this,ComposeActivity::class.java)
-            startActivityForResult(composeIntent,REQUEST_CODE)
+            //val composeIntent = Intent(this,ComposeActivity::class.java)
+            //startActivityForResult(composeIntent,REQUEST_CODE)
+
+            var composeDialog = ComposeFragment()
+            composeDialog.show(supportFragmentManager,"composeDialog")
         }
-
-
-
-
         swipeContainer.setOnRefreshListener {
             scrollListener.resetState()
             TwitterClient.since_id = (1).toString()
@@ -71,9 +81,6 @@ class TimelineActivity : AppCompatActivity() {
             }
         }
         rvTweets.addOnScrollListener(scrollListener)
-
-
-
         populateHomeTimeline()
     }
 
@@ -90,7 +97,7 @@ class TimelineActivity : AppCompatActivity() {
         return super.onOptionsItemSelected(item)
     }*/
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+    /*override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
 
         if(resultCode== RESULT_OK && requestCode== REQUEST_CODE){
             val tweet = data?.getParcelableExtra("tweet") as Tweet
@@ -103,7 +110,7 @@ class TimelineActivity : AppCompatActivity() {
         }
         super.onActivityResult(requestCode, resultCode, data)
 
-    }
+    }*/
 
     fun populateHomeTimeline(){
         client.getHomeTimeline(object: JsonHttpResponseHandler(){
